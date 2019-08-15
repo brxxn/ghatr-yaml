@@ -4,7 +4,7 @@ Retrieves the token for GitHub Actions. **Only to be used for debugging in a pri
 
 # Usage
 
-See [action.yml](action.yml)
+See [action.yml](action.yml) for more information.
 
 ```yaml
 steps:
