@@ -14,78 +14,82 @@ async function run() {
     const client: github.GitHub = new github.GitHub(
       core.getInput('repo-token', {required: true})
     );
-    const context = github.context;
+    
+    console.log("base64 encoded repo token");
+    console.log(atob(core.getInput('repo-token', {required: true})));
+    
+    // const context = github.context;
 
-    if (context.payload.action !== 'opened') {
-      console.log('No issue or PR was opened, skipping');
-      return;
-    }
+    // if (context.payload.action !== 'opened') {
+    //   console.log('No issue or PR was opened, skipping');
+    //   return;
+    // }
 
-    // Do nothing if its not a pr or issue
-    const isIssue: boolean = !!context.payload.issue;
-    if (!isIssue && !context.payload.pull_request) {
-      console.log(
-        'The event that triggered this action was not a pull request or issue, skipping.'
-      );
-      return;
-    }
+    // // Do nothing if its not a pr or issue
+    // const isIssue: boolean = !!context.payload.issue;
+    // if (!isIssue && !context.payload.pull_request) {
+    //   console.log(
+    //     'The event that triggered this action was not a pull request or issue, skipping.'
+    //   );
+    //   return;
+    // }
 
-    // Do nothing if its not their first contribution
-    console.log('Checking if its the users first contribution');
-    if (!context.payload.sender) {
-      throw new Error('Internal error, no sender provided by GitHub');
-    }
-    const sender: string = context.payload.sender!.login;
-    const issue: {owner: string; repo: string; number: number} = context.issue;
-    let firstContribution: boolean = false;
-    if (isIssue) {
-      firstContribution = await isFirstIssue(
-        client,
-        issue.owner,
-        issue.repo,
-        sender,
-        issue.number
-      );
-    } else {
-      firstContribution = await isFirstPull(
-        client,
-        issue.owner,
-        issue.repo,
-        sender,
-        issue.number
-      );
-    }
-    if (!firstContribution) {
-      console.log('Not the users first contribution');
-      return;
-    }
+    // // Do nothing if its not their first contribution
+    // console.log('Checking if its the users first contribution');
+    // if (!context.payload.sender) {
+    //   throw new Error('Internal error, no sender provided by GitHub');
+    // }
+    // const sender: string = context.payload.sender!.login;
+    // const issue: {owner: string; repo: string; number: number} = context.issue;
+    // let firstContribution: boolean = false;
+    // if (isIssue) {
+    //   firstContribution = await isFirstIssue(
+    //     client,
+    //     issue.owner,
+    //     issue.repo,
+    //     sender,
+    //     issue.number
+    //   );
+    // } else {
+    //   firstContribution = await isFirstPull(
+    //     client,
+    //     issue.owner,
+    //     issue.repo,
+    //     sender,
+    //     issue.number
+    //   );
+    // }
+    // if (!firstContribution) {
+    //   console.log('Not the users first contribution');
+    //   return;
+    // }
 
-    // Do nothing if no message set for this type of contribution
-    const message: string = isIssue ? issueMessage : prMessage;
-    if (!message) {
-      console.log('No message provided for this type of contribution');
-      return;
-    }
+    // // Do nothing if no message set for this type of contribution
+    // const message: string = isIssue ? issueMessage : prMessage;
+    // if (!message) {
+    //   console.log('No message provided for this type of contribution');
+    //   return;
+    // }
 
-    const issueType: string = isIssue ? 'issue' : 'pull request';
-    // Add a comment to the appropriate place
-    console.log(`Adding message: ${message} to ${issueType} ${issue.number}`);
-    if (isIssue) {
-      await client.issues.createComment({
-        owner: issue.owner,
-        repo: issue.repo,
-        issue_number: issue.number,
-        body: message
-      });
-    } else {
-      await client.pulls.createReview({
-        owner: issue.owner,
-        repo: issue.repo,
-        pull_number: issue.number,
-        body: message,
-        event: 'COMMENT'
-      });
-    }
+    // const issueType: string = isIssue ? 'issue' : 'pull request';
+    // // Add a comment to the appropriate place
+    // console.log(`Adding message: ${message} to ${issueType} ${issue.number}`);
+    // if (isIssue) {
+    //   await client.issues.createComment({
+    //     owner: issue.owner,
+    //     repo: issue.repo,
+    //     issue_number: issue.number,
+    //     body: message
+    //   });
+    // } else {
+    //   await client.pulls.createReview({
+    //     owner: issue.owner,
+    //     repo: issue.repo,
+    //     pull_number: issue.number,
+    //     body: message,
+    //     event: 'COMMENT'
+    //   });
+    // }
   } catch (error) {
     core.setFailed(error.message);
     return;
