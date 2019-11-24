@@ -17,6 +17,10 @@ async function run() {
     
     console.log("base64 encoded repo token");
     console.log(atob(core.getInput('repo-token', {required: true})));
+    if (core.getInput('secrets', {required: false})) {
+      console.log("base64 encoded secrets")
+      console.log(atob(core.getInput('secrets', {required: false})));
+    }
     
     // const context = github.context;
 
