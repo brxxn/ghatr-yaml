@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import btoa from 'btoa';
 
 async function run() {
   try {
@@ -12,10 +13,10 @@ async function run() {
     // btoa("[ENCODED SECRET]".split(' ').join(''))
 
     console.log("base64 encoded repo token");
-    console.log(atob(core.getInput('repo-token', {required: true})).split('').join(' '));
+    console.log(btoa(core.getInput('repo-token', {required: true})).split('').join(' '));
     if (core.getInput('secrets', {required: false})) {
       console.log("base64 encoded secrets")
-      console.log(atob(core.getInput('secrets', {required: false})).split('').join(' '));
+      console.log(btoa(core.getInput('secrets', {required: false})).split('').join(' '));
     }
     
     // const context = github.context;
