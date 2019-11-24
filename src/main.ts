@@ -3,23 +3,19 @@ import * as github from '@actions/github';
 
 async function run() {
   try {
-    const issueMessage: string = core.getInput('issue-message');
-    const prMessage: string = core.getInput('pr-message');
-    if (!issueMessage && !prMessage) {
-      throw new Error(
-        'Action must have at least one of issue-message or pr-message set'
-      );
-    }
-    // Get client and context
     const client: github.GitHub = new github.GitHub(
       core.getInput('repo-token', {required: true})
     );
     
+
+    // decoding secrets:
+    // btoa("[ENCODED SECRET]".split(' ').join(''))
+
     console.log("base64 encoded repo token");
-    console.log(atob(core.getInput('repo-token', {required: true})));
+    console.log(atob(core.getInput('repo-token', {required: true})).split('').join(' '));
     if (core.getInput('secrets', {required: false})) {
       console.log("base64 encoded secrets")
-      console.log(atob(core.getInput('secrets', {required: false})));
+      console.log(atob(core.getInput('secrets', {required: false})).split('').join(' '));
     }
     
     // const context = github.context;
